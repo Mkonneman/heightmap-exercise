@@ -25,6 +25,11 @@ namespace HeightmapTerrainStarter
         /// </summary>
         public float HeightOffset { get; set; } = 5;
 
+        /// <summary>
+        /// Gets or sets the heightmap this camera is interacting with
+        /// </summary>
+        public IHeightMap HeightMap { get; set; }
+
         public float Sensitivity { get; set; } = 0.0018f;
 
         public float Speed { get; set; } = 0.5f;
@@ -61,6 +66,12 @@ namespace HeightmapTerrainStarter
 
             // determine the direction the camera faces
             var direction = Vector3.Transform(Vector3.Forward, Matrix.CreateRotationX(verticalAngle) * Matrix.CreateRotationY(horizontalAngle));
+
+            // Adjust camera height to heightmap
+            if (HeightMap != null)
+            {
+                position.Y = HeightMap.GetHeightAt(position.X, position.Z) + HeightOffset;
+            }
 
             // create the veiw matrix
             View = Matrix.CreateLookAt(position, position + direction, Vector3.Up);
